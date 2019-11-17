@@ -14,7 +14,7 @@ if (scalar @ARGV > 1) {
     print "The program only accepts 1 argument, the destination folder";
     exit;
 }
-elsif ($ARGV[0] eq "help") {
+elsif ($ARGV[0] eq "--help") {
     print "Only one option available, the destination folder, which is the first argument. If not provided, the output defaults to ~/Pictures/NG/";
     exit;
 }
@@ -43,14 +43,14 @@ sub download_save {
     if (!-e $final_dest) {
         
         # we dowload the pic from national geographic's web into temporal folder
-        `wget http://photography.nationalgeographic.com/photography/photo-of-the-day/ --quiet -O- > /tmp/index`;
+        `/usr/bin/wget http://photography.nationalgeographic.com/photography/photo-of-the-day/ --quiet -O- > /tmp/index`;
         
         # here we extract the image link from NG's downloaded website
-        my $link=`grep -m 1 https://yourshot.nationalgeographic.com/u/.* /tmp/index -o`;
-        my $bettered_link = substr $link, 0, -5;
+        # grep https://www.nationalgeographic.com/content/dam/photography/photo-of-the-day/*.*adapt.1900.1.jpeg hola | rev | cut -d'"' -f2 | rev"
+        my $link=`grep https://www.nationalgeographic.com/content/dam/photography/photo-of-the-day/*.*adapt.1900.1.jpeg /tmp/index  | rev | cut -d'"' -f2 | rev | head -c -1`;
         
         # download and save image to desired folder (by default ~/Pictures/NG)
-        `wget $bettered_link --quiet -O $final_dest`;
+        `/usr/bin/wget $link --quiet -O $final_dest`;
         `rm /tmp/index`;
     }
 
